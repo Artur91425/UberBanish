@@ -1,6 +1,20 @@
 ## Interface: 11200
 ## Title: UberBanish
-## Version: 0.4a
 ## Notes: Automatically counts down your banish timer into raid or party chat, notifies other warlocks of early breaks or banisher deaths.
-## SavedVariables: UberBanish_Config
-UberBanish.xml
+## Notes-ruRU: Автоматически подсчитывает таймер изгнания чат рейда или группы, уведомляет других чернокнижников о ранних прерываниях или о смерти других чернокнижников во время изгнания.
+## Author: Lichery
+## Version: 2.0
+## SavedVariables: UberBanishDB
+
+## X-Date: 21.05.2018
+## X-Credits: Original author Aule (joeh@foldingrain.com)
+## X-Website: https://vk.com/id65515748
+## X-Category: Warlock 
+## X-Commands: /uberbanish, /ub
+
+Locale\Localization.lua
+Locale\Localization_ruRU.lua
+Locale\Localization_other.lua
+
+UberBanish.lua
+Options.lua

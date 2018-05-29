@@ -1,0 +1,86 @@
+Version 1.2b:
+----------------
+x Added on/off switches for spamming Banish start, Banish end, and notifying
+  other Warlocks on death.
+x Now properly discriminates between Banish Rank 1 & 2.
+
+Version 1.1b:
+----------------
+x Fixed a small bug which could cause UberBanish to think you were in a party
+  when you were actually in a raid.
+ 
+Version 1.0b:
+----------------
+x Graduated to beta.
+
+Version 0.4a:
+----------------
+x Implemented options GUI.
+x Now detects when Banish is cast from a macro.
+
+Version 0.3.1a:
+----------------
+x Fixed a bug that would sometimes prevent spells from being draggable
+  into action slots.
+  
+Version 0.3a:
+----------------
+x UberBanish was using a timer mechanism that relied on updates from the
+  the server rather than the local simulation clock.  This made banish
+  reporting in high-latency situations (like in a 40-man raid) extremely
+  unreliable.  UberBanish now uses the simulation clock instead and is
+  much more reliable in large raids.
+x Implemented a new, event-driven method of detecting banish breaking
+  when another target is selected.
+x Fixed a bug which caused resisted Banishes to be reported as breaks.
+x Fixed a bug which would cause an early break report AND kill the
+  Banish timer if a mob was banished, then a banish was attempted
+  on another target but failed.
+x Fixed a bug which sometimes caused an early break notice if a Warlock
+  moved during a banish cast.
+x Fixed a bug which sometimes caused a timer kill if another mob died.
+x Fixed a bug which prevented a new timer from starting up if a
+  new mob was banished during the banish duration of anotehr mob.
+x Fixed a bug which caused an early break notice if the Warlock
+  switched targets right after a banish.
+x Fixed a bug which caused an improper mob name to appear in the banish
+  message if the Warlock switched targets right after a banish.
+x Fixed a bug which caused an early break notice if the Warlock 
+  rebanished just at the end of a previous banish.
+x Fixed a bug which caused the timers to kill if a pet was summoned.
+x The mechanism for determing resists or immunes has been greatly improved.
+x Death whisper no longer goes to the warlock who died.
+
+Version 0.2a:
+----------------
+x Banish detection and break logic has been greatly improved in situations
+  where a warlock switches targets during a banish.
+x Fixed a bug which caused UB to always report a broken banish when
+  another target is banished while a current banish is up.
+x Fixed a bug which caused the banish timer to stop every time another
+  target is killed.
+x Added Say-When-Solo debug feature.
+x When the Warlock's banish breaks early and the BFM appears, clicking on it
+  automatically rebanishes the current target.
+  
+Version 0.1a:
+----------------
+x Notify other locks if caster dies within 1 minute of a banish.
+x Discriminate between party chat and raid chat.
+x Consider when banish has been activated but no target is selected.
+x Trap the party / raid join event and create a list of all warlocks.
+x Broadcast early breaks to the party and banisher deaths to the other warlocks.
+x Currently doesn't allow spell macros.
+x When a aura clear event is fired, check if the current target is
+  still banished.  If yes, ignore, if not, broadcast banish is broken.
+x If self dies, check banish timer.  If > 0, broadcast the pickup message.
+x Dismiss user notice early if banish is re-cast.
+x Big fat message and a sound when your banish breaks.
+x Notify caster if banish breaks.  Preferably a big warning with a sound.
+x If not Warlock, disable.
+x If you change targets, the timer should still tick?
+x Properly unregister events.
+x Position the break warning a little higher over the toon.
+x Localization.
+x Slash interface.
+x Broadcast a BFM when a warlock dies.
