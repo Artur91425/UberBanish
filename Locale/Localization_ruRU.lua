@@ -7,7 +7,7 @@ if GetLocale() == "ruRU" then
 	UB_MY_BANISH_EXPIRES			= "Моё 'Изгнание' истекает сейчас!"
 	UB_HAS_DIED_WHILE_BANISHING	= "ВНИМАНИЕ: %s умер при изгнании!"
 	
-	UB_LOADED = "Аддон загружен. Введите /ub для помощи."
+	UB_LOADED = "Аддон загружен."
 	UB_OPTION_CUR_SET = "%s в настоящее время установлен на %s"
 	UB_OPTION_NOW_SET = "%s теперь установлен на %s"
 	UB_INFO = "Инфо"
@@ -17,9 +17,6 @@ if GetLocale() == "ruRU" then
 	UB_STANDBY = "Состояние"
 	UB_ON = "Вкл."
 	UB_OFF = "Выкл."
-	UB_USAGE = "Использование"
-	UB_CONFIG_CMD_DESC = "Открывает окно настроек."
-	UB_NOT_VALID_CMD = "%s - недействительная опция для %s"
 	UB_BB_HIDDEN = "Кнопка Изгнания скрыта."
 	UB_BB_SHOWN = "Кнопка Изгнания показана."
 	

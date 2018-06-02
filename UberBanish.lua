@@ -108,8 +108,6 @@ function UberBanish:OnInitialize()
 	self:LoadOptions()
 	self:LoadBFMFrame()
 	self:LoadBanishFrame()
-	--self:ParseAllPatterns()
-	self:RegisterChatCommands()
 	
 	self:print(UB_LOADED)
 	
@@ -354,22 +352,6 @@ end
 function UberBanish:Say(msg)
 	if gAnnounceChannel == "SAY" and not UberBanishDB.SayWhenSolo then return end
 	SendChatMessage(msg, gAnnounceChannel)
-end
-
-function UberBanish:RegisterChatCommands()
-	SLASH_UBERBANISH1 = "/uberbanish"
-	SLASH_UBERBANISH2 = "/ub"
-	SlashCmdList["UBERBANISH"] = function(cmd)
-		if not cmd or cmd == "" then
-			self:print(GetAddOnMetadata(self:GetName(), "Notes"))
-			ChatFrame1:AddMessage("|cffffff7f"..UB_USAGE..":|r /ub {config | about}")
-			ChatFrame1:AddMessage("|cffffff7f- config:|r "..UB_CONFIG_CMD_DESC)
-		elseif cmd == "config" then
-			_G[self:GetName().."ConfigFrame"]:Show()
-		else
-			self:print(format(UB_NOT_VALID_CMD, "[|cffffff7f"..cmd.."|r]", "|cffffff7f"..SLASH_UBERBANISH1.."|r"))
-		end
-	end
 end
 
 function UberBanish:UpdateAnnounceChannel()
