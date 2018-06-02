@@ -404,6 +404,7 @@ end
 
 function UberBanish:LoadBanishFrame()
 	local BanishButton = CreateFrame("Button", self:GetName().."BanishButton", UIParrent)
+	BanishButton:SetFrameStrata("HIGH")
 	BanishButton:SetWidth(50)
 	BanishButton:SetHeight(50)
 	BanishButton:SetPoint(unpack(UberBanishDB.BanishButtonPosition))
@@ -455,8 +456,6 @@ end
 function UberBanish:LoadBFMFrame()
 	local BFMFrame = CreateFrame("Frame", self:GetName().."BFMFrame", UIParrent)
 	BFMFrame:Hide()
-	BFMFrame:SetFrameStrata("FULLSCREEN")
-	BFMFrame:SetToplevel(true)
 	BFMFrame:EnableMouse(1)
 	BFMFrame:SetWidth(360)
 	BFMFrame:SetHeight(50)
