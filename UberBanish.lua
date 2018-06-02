@@ -466,6 +466,9 @@ function UberBanish:LoadBFMFrame()
 	})
 	BFMFrame.text = BFMFrame:CreateFontString(self:GetName().."BFMFrameText", "BACKGROUND", "GameFontNormalLarge")
 	BFMFrame.text:SetAllPoints(BFMFrame)
+	BFMFrame:SetScript("OnUpdate", function()
+		if this:GetAlpha() == 0 then this:Hide() end
+	end)
 end
 
 function UberBanish:round(num, idp)
