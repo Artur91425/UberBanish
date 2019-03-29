@@ -1,43 +1,50 @@
-UB_BANISH									= "Banish"
-UB_BANISH_RANK1						= "Banish(Rank 1)"
-UB_MOB_BROKE_YOUR_BANISH	= "MOB BROKE YOUR BANISH!!!"
-UB_HAS_BANISHED						= "%s has banished %s."
-UB_BANISH_BREAKS_IN				= "Banish breaks in %s seconds..."
-UB_MY_BANISH_EXPIRES			= "My Banish expires now!"
-UB_HAS_DIED_WHILE_BANISHING	= "WARNING: %s has died while banishing!"
+if not UberBanish then return end
 
-UB_LOADED = "Addon loaded."
-UB_OPTION_CUR_SET = "%s is currently set to %s"
-UB_OPTION_NOW_SET = "%s is now set to %s"
-UB_INFO = "Info"
-UB_ENABLE = "Enable"
-UB_INFORMATION = "Information"
-UB_DEBUGGING = "Debugging"
-UB_STANDBY = "Standby"
-UB_ON = "On"
-UB_OFF = "Off"
-UB_BB_HIDDEN = "BanishBitton is hidden."
-UB_BB_SHOWN = "BanishBitton is shown."
+local L = UberBanish.L
 
-UB_MB_TOOLTIP1 = {"Left-Click", "Toggle BanishFrame"}
-UB_MB_TOOLTIP2 = {"Right-Click", "Open Configuration"}
-UB_BB_TOOLTIP1 = {"Left-Click", "Cast Banish(Rank 2)"}
-UB_BB_TOOLTIP2 = {"Right-Click", "Cast Banish(Rank 1)"}
-UB_BB_TOOLTIP3 = {"Shift-Drag", "Move button"}
+L["Banish"] = nil
+L["Banish(Rank 1)"] = nil
+L["MOB BROKE YOUR BANISH!!!"] = nil
+L["%s has banished %s."] = nil
+L["Banish breaks in %s seconds..."] = nil
+L["My Banish expires now!"] = nil
+L["WARNING: %s has died while banishing!"] = nil
 
-UB_CHECKBUTTON1_DESC = "Spam Banish Start."
-UB_CHECKBUTTON2_DESC = "20 Second Warning."
-UB_CHECKBUTTON3_DESC = "10 Second Warning."
-UB_CHECKBUTTON4_DESC = "5 Second Warning."
-UB_CHECKBUTTON5_DESC = "Spam Banish End."
-UB_CHECKBUTTON6_DESC = "Notify other Warlocks on death."
-UB_CHECKBUTTON7_DESC = "Spam the raid if a Banish breaks early."
-UB_CHECKBUTTON7_TOOLTIP = "Works ONLY if the player is within 28-30 yards from the unit with the Banish!"
-UB_CHECKBUTTON8_DESC = "Spam the raid when you die during Banish."
-UB_CHECKBUTTON8_TOOLTIP = "up to 30 seconds since the last Banish."
-UB_CHECKBUTTON9_DESC = "Speak aloud when solo."
+L["Addon loaded."] = nil
+L["%s is currently set to %s"] = nil
+L["%s is now set to %s"] = nil
+L["Info"] = nil
+L["Enable"] = nil
+L["Information"] = nil
+L["Debugging"] = nil
+L["Standby"] = nil
+L["On"] = nil
+L["Off"] = nil
+L["BanishBitton is hidden."] = nil
+L["BanishBitton is shown."] = nil
 
-UB_INFORMATION_TEXT = [[In the addon, there are two variants for detecting Banish:
+L["Left-Click"] = nil
+L["Right-Click"] = nil
+L["Shift-Drag"] = nil
+L["Toggle BanishFrame"] = nil
+L["Open Configuration"] = nil
+L["Cast Banish(Rank 2)"] = nil
+L["Cast Banish(Rank 1)"] = nil
+L["Move button"] = nil
+
+L["Spam Banish Start."] = nil
+L["20 Second Warning."] = nil
+L["10 Second Warning."] = nil
+L["5 Second Warning."] = nil
+L["Spam Banish End."] = nil
+L["Notify other Warlocks on death."] = nil
+L["Spam the raid if a Banish breaks early."] = nil
+L["Works ONLY if the player is within 28-30 yards from the unit with the Banish!"] = nil
+L["Spam the raid when you die during Banish."] = nil
+L["up to 30 seconds since the last Banish."] = nil
+L["Speak aloud when solo."] = nil
+
+L["info_text"] = [[In the addon, there are two variants for detecting Banish:
 	
 	1. Correct. The timer is activated at the event CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE.
 	

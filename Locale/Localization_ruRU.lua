@@ -1,44 +1,51 @@
-if GetLocale() == "ruRU" then
-	UB_BANISH					= "Изгнание"
-	UB_BANISH_RANK1				= "Изгнание(Уровень 1)"
-	UB_MOB_BROKE_YOUR_BANISH	= "MOB BROKE YOUR BANISH!!!"
-	UB_HAS_BANISHED						= "%s накладывает 'Изгнание' на %s."
-	UB_BANISH_BREAKS_IN				= "'Изгнание' истекает через %s секунд..."
-	UB_MY_BANISH_EXPIRES			= "Моё 'Изгнание' истекает сейчас!"
-	UB_HAS_DIED_WHILE_BANISHING	= "ВНИМАНИЕ: %s умер при изгнании!"
-	
-	UB_LOADED = "Аддон загружен."
-	UB_OPTION_CUR_SET = "%s в настоящее время установлен на %s"
-	UB_OPTION_NOW_SET = "%s теперь установлен на %s"
-	UB_INFO = "Инфо"
-	UB_ENABLE = "Включить"
-	UB_INFORMATION = "Информация"
-	UB_DEBUGGING = "Отладка"
-	UB_STANDBY = "Состояние"
-	UB_ON = "Вкл."
-	UB_OFF = "Выкл."
-	UB_BB_HIDDEN = "Кнопка Изгнания скрыта."
-	UB_BB_SHOWN = "Кнопка Изгнания показана."
-	
-	UB_MB_TOOLTIP1 = {"Левая кнопка мыши", "Показать/Скрыть кнопку Изгнания"}
-	UB_MB_TOOLTIP2 = {"Правая кнопка мыши", "Открыть настройки"}
-	UB_BB_TOOLTIP1 = {"Левая кнопка мыши", "Произнесение 'Изгнание(Уровень 2)'"}
-	UB_BB_TOOLTIP2 = {"Правая кнопка мыши", "Произнесение 'Изгнание(Уровень 1)'"}
-	UB_BB_TOOLTIP3 = {"Shift + перемещение", "Перемещение кнопки"}
-	
-	UB_CHECKBUTTON1_DESC = "Сообщать о начале Изгнания."
-	UB_CHECKBUTTON2_DESC = "Сообщать на 20 секундах."
-	UB_CHECKBUTTON3_DESC = "Сообщать на 10 секундах."
-	UB_CHECKBUTTON4_DESC = "Сообщать на 5 секундах."
-	UB_CHECKBUTTON5_DESC = "Сообщать о завершении Изгнания."
-	UB_CHECKBUTTON6_DESC = "Оповещать других чернокнижников\nо Вашей смерти."
-	UB_CHECKBUTTON7_DESC = "Сообщать в рейд, если Изгнание\nпрервалось раньше."
-	UB_CHECKBUTTON7_TOOLTIP = "Работает ТОЛЬКО если игрок находится в пределах ДО 28-30 метров от моба с Изгнанием!"
-	UB_CHECKBUTTON8_DESC = "Сообщать в рейд, если Вы умерли\nво время Изгнания."
-	UB_CHECKBUTTON8_TOOLTIP = "до 30 секунд с момента последнего Изгнания."
-	UB_CHECKBUTTON9_DESC = "Сообщать, когда вне группы."
+if not UberBanish then return end
 
-	UB_INFORMATION_TEXT = [[В аддоне есть два варианта обнаружения Изгнания:
+if GetLocale() == "ruRU" then
+	local L = UberBanish.L
+	
+	L["Banish"] = "Изгнание"
+	L["Banish(Rank 1)"] = "Изгнание(Уровень 1)"
+	L["MOB BROKE YOUR BANISH!!!"]	= "MOB BROKE YOUR BANISH!!!"
+	L["%s has banished %s."] = "%s накладывает 'Изгнание' на %s."
+	L["Banish breaks in %s seconds..."]				= "'Изгнание' истекает через %s секунд..."
+	L["My Banish expires now!"]			= "Моё 'Изгнание' истекает сейчас!"
+	L["WARNING: %s has died while banishing!"]	= "ВНИМАНИЕ: %s умер при изгнании!"
+	
+	L["Addon loaded."] = "Аддон загружен."
+	L["%s is currently set to %s"] = "%s в настоящее время установлен на %s"
+	L["%s is now set to %s"] = "%s теперь установлен на %s"
+	L["Info"] = "Инфо"
+	L["Enable"] = "Включить"
+	L["Information"] = "Информация"
+	L["Debugging"] = "Отладка"
+	L["Standby"] = "Состояние"
+	L["On"] = "Вкл."
+	L["Off"] = "Выкл."
+	L["BanishBitton is hidden."] = "Кнопка Изгнания скрыта."
+	L["BanishBitton is shown."] = "Кнопка Изгнания показана."
+	
+	L["Left-Click"] = "Левая кнопка мыши"
+	L["Right-Click"] = "Правая кнопка мыши"
+	L["Shift-Drag"] = "Shift + перемещение"
+	L["Toggle BanishFrame"] = "Показать/Скрыть кнопку Изгнания"
+	L["Open Configuration"] = "Открыть настройки"
+	L["Cast Banish(Rank 2)"] = "Произнесение 'Изгнание(Уровень 2)'"
+	L["Cast Banish(Rank 1)"] = "Произнесение 'Изгнание(Уровень 1)'"
+	L["Move button"] = "Перемещение кнопки"
+	
+	L["Spam Banish Start."] = "Сообщать о начале Изгнания."
+	L["20 Second Warning."] = "Сообщать на 20 секундах."
+	L["10 Second Warning."] = "Сообщать на 10 секундах."
+	L["5 Second Warning."] = "Сообщать на 5 секундах."
+	L["Spam Banish End."] = "Сообщать о завершении Изгнания."
+	L["Notify other Warlocks on death."] = "Оповещать других чернокнижников\nо Вашей смерти."
+	L["Spam the raid if a Banish breaks early."] = "Сообщать в рейд, если Изгнание\nпрервалось раньше."
+	L["Works ONLY if the player is within 28-30 yards from the unit with the Banish!"] = "Работает ТОЛЬКО если игрок находится в пределах ДО 28-30 метров от моба с Изгнанием!"
+	L["Spam the raid when you die during Banish."] = "Сообщать в рейд, если Вы умерли\nво время Изгнания."
+	L["up to 30 seconds since the last Banish."] = "до 30 секунд с момента последнего Изгнания."
+	L["Speak aloud when solo."] = "Сообщать, когда вне группы."
+
+	L["info_text"] = [[В аддоне есть два варианта обнаружения Изгнания:
 		
 		1. Корректное. Таймер активируется на событии CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE.
 		

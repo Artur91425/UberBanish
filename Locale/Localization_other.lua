@@ -1,19 +1,23 @@
+if not UberBanish then return end
+
+local L = UberBanish.L
+
 if GetLocale() == "deDE" then
-	UB_BANISH = "Verbannen"
-	UB_BANISH_RANK2 = "Verbannen(Rang 2)"
+	L["Banish"] = "Verbannen"
+	L["Banish(Rank 1)"] = "Verbannen(Rang 1)"
 elseif GetLocale() == "frFR" then
-	UB_BANISH = "Bannir"
-	UB_BANISH_RANK2 = "Bannir(Rang 2)"
+	L["Banish"] = "Bannir"
+	L["Banish(Rank 1)"] = "Bannir(Rang 1)"
 elseif GetLocale() == "zhCN" then
-	UB_BANISH = "放逐术"
-	UB_BANISH_RANK2 = "放逐术(等级 2)"
+	L["Banish"] = "放逐术"
+	L["Banish(Rank 1)"] = "放逐术(等级 1)"
 elseif GetLocale() == "zhTW" then
-	UB_BANISH = "放逐術"
-	UB_BANISH_RANK2 = "放逐術(等級 2)"
+	L["Banish"] = "放逐術"
+	L["Banish(Rank 1)"] = "放逐術(等級 1)"
 elseif GetLocale() == "koKR" then
-	UB_BANISH = "추방"
-	UB_BANISH_RANK2 = "추방(2 레벨)"
+	L["Banish"] = "추방"
+	L["Banish(Rank 1)"] = "추방(1 레벨)"
 elseif GetLocale() == "esES" then
-	UB_BANISH = "Desterrar"
-	UB_BANISH_RANK2 = "Desterrar(Rango 2)"
+	L["Banish"] = "Desterrar"
+	L["Banish(Rank 1)"] = "Desterrar(Rango 1)"
 end

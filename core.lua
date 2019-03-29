@@ -2,23 +2,12 @@
 	
 	---===:::{{{ A U L E ' S    U B E R B A N I S H }}}:::===---
 	
+	Author		: Lichery
+	Version		: 2.1
+	Release Date	: Mar 29, 2019
 	
-	Author		: joeh@foldingrain.com
-	Version		: 1.2b
-	Release Date	: Oct 1, 2006
-	Main			: Aule [Warlock]
-	Server		: Dunemaul
-	Guild		: NoX (Best Guild Ever)
-	Testers		: Tiamat, Janadine, Rhyana, Ampz, Kaed, Houseofm
-	
-	
-	Copyright (c)2006.  All Rights Reserved.
-	All players of World of Warcraft have permission to copy, reproduce, 
-	distribute and modify this computer code in any way they wish with no 
-	permission from the author or any corporation or organization.  The
-	author respectfully requests he be credited for the original inception.
-	
-	
+	Based on original version 1.2b
+
 	OVERVIEW:
 	---------
 	UberBanish is a Banish enhancement with the following main features:
@@ -41,7 +30,23 @@
 	-----------
 	- BFM = Big Fat Message.
 	- A "broadcast message" is a whisper sent to other Warlocks that 
-	will result in a BFM being displayed to them.
+	will result in a BFM being displayed to them.	
+	
+	--[[ old informations
+	Author		: joeh@foldingrain.com
+	Version		: 1.2b
+	Release Date	: Oct 1, 2006
+	Main			: Aule [Warlock]
+	Server		: Dunemaul
+	Guild		: NoX (Best Guild Ever)
+	Testers		: Tiamat, Janadine, Rhyana, Ampz, Kaed, Houseofm
+	
+	
+	Copyright (c)2006.  All Rights Reserved.
+	All players of World of Warcraft have permission to copy, reproduce, 
+	distribute and modify this computer code in any way they wish with no 
+	permission from the author or any corporation or organization.  The
+	author respectfully requests he be credited for the original inception.
 	
 	CREDITS:
 	--------
@@ -52,28 +57,20 @@
 	Thanks also to Andreas Broecking for the SheepWatch Mage mod which
 	gave me some great ideas for tracking banish breaks when the target
 	is not selected.
+	--]]
+	
 --]]
 
-_, UB_playerClass = UnitClass("player")
-if UB_playerClass ~= "WARLOCK" then return end
-local _G = getfenv()
+if not UberBanish then return end
 
-UB_TITLE_VERSION = "UberBanish "..GetAddOnMetadata("UberBanish", "version")
-UberBanishDB = {
-	Enabled = true,
-	Debugging = false,
-	SpamBanishStart = true,
-	SpamBanishEnd = true,
-	TwentySecWarning = true,
-	TenSecWarning = true,
-	FiveSecWarning = true,
-	SpamEarlyBreak = true,
-	SpamDeath = true,
-	SayWhenSolo = false,
-	NotifyLocksOnDeath = true,
-	BanishButtonTooltip = true,
-	BanishButtonPosition = {"CENTER", 0, 0}
-}
+local _G = getfenv()
+local L = UberBanish.L
+
+UberBanish:RegisterEvent("ADDON_LOADED")
+UberBanish:RegisterEvent("VARIABLES_LOADED")
+local config = _G[UberBanish:GetName().."ConfigFrame"]
+local BanishButton = _G[UberBanish:GetName().."BanishButton"]
+local BFMFrame = _G[UberBanish:GetName().."BFMFrame"]
 
 local last_update = GetTime()
 local PlayerName = UnitName("player")
@@ -90,31 +87,11 @@ local gBanishTimer -- Timer that starts up after a banish is successfully cast.
 local gCurrentBanishRank
 local gAnnounceChannel -- The current channel to announce messages on.  Currently one of "SAY", "PARTY", or "RAID".
 
-UberBanish = CreateFrame("Frame", "UberBanish")
-UberBanish:RegisterEvent("ADDON_LOADED")
-
-function UberBanish:print(text, r, g, b, frame, delay)
-	if not text then text = "nil" end
-	(frame or DEFAULT_CHAT_FRAME):AddMessage("|cffffff78"..self:GetName()..":|r "..text, r, g, b, nil, delay or 5)
-end
-
-function UberBanish:debug(text, r, g, b, frame, delay)
-	if not UberBanishDB.Debugging then return end
-	if not text then text = " " end
-	(frame or DEFAULT_CHAT_FRAME):AddMessage(format("[%s%4d] ".."|cff7fff7f(DEBUG) "..self:GetName()..":|r "..text, date("%H:%M:%S"), math.mod(GetTime(), 1) * 1000), r, g, b, nil, delay or 5)
-end
-
 function UberBanish:OnInitialize()
-	self:LoadOptions()
-	self:LoadBFMFrame()
-	self:LoadBanishFrame()
-	
-	self:print(UB_LOADED)
-	
 	if UberBanishDB.Enabled then
 		self:OnEnable()
 	else
-		self:print(format(UB_OPTION_CUR_SET, "|cffffff7f"..UB_STANDBY.."|r", "|cffffff7f[|r|cffff0000"..UB_OFF.."|r|cffffff7f]|r"))
+		self:print(format(L["%s is currently set to %s"], "|cffffff7f"..L["Standby"].."|r", "|cffffff7f[|r|cffff0000"..L["Off"].."|r|cffffff7f]|r"))
 		self:OnDisable()
 	end
 end
@@ -134,21 +111,26 @@ function UberBanish:OnEnable()
 	
 	self:UpdateAnnounceChannel()
 	self:UpdateWarlockList()
-	_G[self:GetName().."BanishButton"]:Show()
+	BanishButton:Show()
 end
 
 function UberBanish:OnDisable()
-	_G[self:GetName().."BanishButton"]:Hide()
+	BanishButton:Hide()
 	self:UnregisterAllEvents()
 	if gAlreadyBanishFlag then self:KillTimer() end
 end
 
 UberBanish:SetScript("OnEvent", function()
 	this:debug("|cff32CD32Got An Event:|r "..event)
-	local spellIsBanish
 	
 	if event == "ADDON_LOADED" and arg1 == this:GetName() then
 		this:OnInitialize()
+	elseif event == "VARIABLES_LOADED" then
+		config.enable:SetChecked(UberBanishDB.Enabled)
+		config.debug:SetChecked(UberBanishDB.Debugging)
+		for k, v in pairs(UberBanish.buttonTable) do
+			config.checkbox[k]:SetChecked(UberBanishDB[v[1]])
+		end
 	elseif event == "SPELLCAST_STOP" then
 		if not gBanishPendingFlag then return end
 		
@@ -163,8 +145,7 @@ UberBanish:SetScript("OnEvent", function()
 		end
 		gBanishTimerScheduled = nil
 	elseif event == "CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE" then
-		_, _, spellIsBanish = string.find(arg1, "("..UB_BANISH..")")
-		if not (spellIsBanish and gBanishPendingFlag)then return end
+		if not (this:CheckBanish(arg1) and gBanishPendingFlag)then return end
 		
 		if gAlreadyBanishFlag then
 			this:debug("Existing timer was deleted!")
@@ -174,8 +155,7 @@ UberBanish:SetScript("OnEvent", function()
 		this:debug("BANISH WAS SUCCESSFULLY CAST!")
 		this:StartTimer()
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
-		_, _, spellIsBanish = string.find(arg1, "("..UB_BANISH..")")
-		if not spellIsBanish then return end
+		if not this:CheckBanish(arg1) then return end
 		
 		if gAlreadyBanishFlag then
 			this:debug("There is another active Banish up...not killing timer.")
@@ -183,15 +163,14 @@ UberBanish:SetScript("OnEvent", function()
 			BadBanishCastFlag = true
 		end
 	elseif event == "CHAT_MSG_SPELL_AURA_GONE_OTHER" then
-		_, _, spellIsBanish = string.find(arg1, "("..UB_BANISH..")")
-		if not (spellIsBanish and gBanishTimer) then return end
+		if not (this:CheckBanish(arg1) and gBanishTimer) then return end
 		
 		if gBanishTimer > 1 then -- if the timer did not end, then the banish was broken, report it!
 			this:debug("Banish broke early!")
 			PlaySound("igQuestLogAbandonQuest")
-			this:BFMPrint(UB_MOB_BROKE_YOUR_BANISH)
+			this:BFMPrint(L["MOB BROKE YOUR BANISH!!!"])
 			if UberBanishDB.SpamEarlyBreak then
-				this:Say("WARNING: My banish broke early!")
+				this:Report("WARNING: My banish broke early!")
 			end
 		end
 		this:KillTimer()
@@ -207,9 +186,9 @@ UberBanish:SetScript("OnEvent", function()
 		
 		this:debug("Player dead and time since last banish: "..time.." seconds.")
 		if gAlreadyBanishFlag then this:KillTimer() end
-		this:SpamWarlocks(format(UB_HAS_DIED_WHILE_BANISHING, PlayerName))
+		this:SpamWarlocks(format(L["WARNING: %s has died while banishing!"], PlayerName))
 		if UberBanishDB.SpamDeath then
-			this:Say(format(UB_HAS_DIED_WHILE_BANISHING, PlayerName))
+			this:Report(format(L["WARNING: %s has died while banishing!"], PlayerName))
 		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		local _, _, content = string.find(arg1, '<'..this:GetName()..'BC> (.*)')
@@ -234,7 +213,7 @@ UberBanish:SetScript("OnUpdate", function()
 	if not gAlreadyBanishFlag then return end
 	
 	local remaining = gBanishDuration - (last_update - gBanishStartTime)
-	_G[this:GetName().."BanishButtonCooldownText"]:SetText(this:round(remaining, 1))
+	BanishButton.cd.text:SetText(this:round(remaining, 1))
 	
 	local intSnap
 	if remaining < gBanishTimer then intSnap = true end
@@ -243,14 +222,14 @@ UberBanish:SetScript("OnUpdate", function()
 	if intSnap then -- Report timer only at the integers
 		this:debug("Banish Timer: "..gBanishTimer)
 		if gBanishTimer == 5 then
-			UIFrameFlash(_G[this:GetName().."BanishButton"], .8, .8, 5, 1)
+			UIFrameFlash(BanishButton, .8, .8, 5, 1)
 		end
 		if (gBanishTimer == 20 and UberBanishDB.TwentySecWarning)
-		or (gBanishTimer == 10 and UberBanishDB.TenSecWarning)
-		or (gBanishTimer == 5 and UberBanishDB.FiveSecWarning) then
-			this:Say(format(UB_BANISH_BREAKS_IN, gBanishTimer))
+			or (gBanishTimer == 10 and UberBanishDB.TenSecWarning)
+			or (gBanishTimer == 5 and UberBanishDB.FiveSecWarning) then
+			this:Report(format(L["Banish breaks in %s seconds..."], gBanishTimer))
 		elseif gBanishTimer == 1 and UberBanishDB.SpamBanishEnd then
-			this:Say(UB_MY_BANISH_EXPIRES)
+			this:Report(L["My Banish expires now!"])
 		end
 	end
 	if remaining < 0 and gAlreadyBanishFlag then -- If the event CHAT_MSG_SPELL_AURA_GONE_OTHER did not work 
@@ -258,48 +237,12 @@ UberBanish:SetScript("OnUpdate", function()
 	end
 end)
 
-------------------
--- Hook functions
-------------------
-BlizzardCastSpellByName = CastSpellByName
-function CastSpellByName(spell)
-	BlizzardCastSpellByName(spell)
-	local _, _, spellRank = string.find(spell, "(%d+)")
-	UberBanish:debug("|cff87CEEBCastSpellByName|r: "..spell)
-	UberBanish:UpdateCastSpellInfo(spell, spellRank)
+function UberBanish:CheckBanish(msg)
+	return string.find(msg, L["Banish"]) and true
 end
-
-BlizzardCastSpell = CastSpell
-function CastSpell(spellId, bookType)
-	BlizzardCastSpell(spellId, bookType)	
-	local spellName, spellRank = GetSpellName(spellId, bookType)
-	_, _, spellRank = string.find(spellRank, "(%d+)")
-	UberBanish:debug(format("|cff87CEEBCastSpell|r: %s; Rank: %s", spellName, spellRank))
-	UberBanish:UpdateCastSpellInfo(spellName, spellRank)
-end
-
-local UberBanishSpellTooltip = CreateFrame("GameTooltip", "UberBanishSpellTooltip", UIParent, "GameTooltipTemplate")
-BlizzardUseAction = UseAction
-function UseAction(slot, checkCursor, onSelf)
-	BlizzardUseAction(slot, checkCursor, onSelf)
-	if not (UberBanishDB.Enabled and HasAction(slot)) then return end
-	
-	UberBanishSpellTooltip:Hide()
-	UberBanishSpellTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
-	UberBanishSpellTooltip:SetAction(slot)
-	
-	local spellName = UberBanishSpellTooltipTextLeft1:GetText()
-	local spellRank
-	if UberBanishSpellTooltipTextRight1:GetText() then
-		_, _, spellRank = string.find(UberBanishSpellTooltipTextRight1:GetText(), "(%d+)")
-	end
-	UberBanish:debug(format("|cff87CEEBUseAction|r: slotID: %s; spellName: %s; spellRank: %s", slot, spellName, tostring(spellRank)))
-	UberBanish:UpdateCastSpellInfo(spellName, spellRank)
-end
-------------------
 
 function UberBanish:UpdateCastSpellInfo(spell, rank)
-	local _, _, spellIsBanish = string.find(spell, "("..UB_BANISH..")")
+	local spellIsBanish = self:CheckBanish(arg1)
 	if not spellIsBanish then
 		gBanishPendingFlag = nil
 		return
@@ -319,37 +262,41 @@ function UberBanish:StartTimer(status, delay)
 	if status == "inaccurate" then
 		self:debug("Starting |cffFF0000INACCURATE|r timer...")
 		gBanishDuration = floor(BANISH_DURATION[gCurrentBanishRank] - delay)
-		SetButtonPulse(_G[self:GetName().."BanishButton"], gBanishDuration, .5)
+		SetButtonPulse(BanishButton, gBanishDuration, .5)
 	else
 		self:debug("Starting timer...")
 		gBanishDuration = BANISH_DURATION[gCurrentBanishRank]
 	end
-	self:Say(format(UB_HAS_BANISHED, PlayerName, gCurrentBanishTarget))
+	if UberBanishDB.SpamBanishStart then
+		self:Report(format(L["%s has banished %s."], PlayerName, gCurrentBanishTarget))
+	end
 	gBanishTimerScheduled = nil
 	gAlreadyBanishFlag = true
 	gBanishPendingFlag = nil
 	gBanishTimer = gBanishDuration
 	gBanishStartTime = GetTime()
 	gTimeSinceLastBanish = gBanishStartTime
-	CooldownFrame_SetTimer(_G[self:GetName().."BanishButtonCooldown"], gBanishStartTime, gBanishDuration, 1)
+	CooldownFrame_SetTimer(BanishButton.cd, gBanishStartTime, gBanishDuration, 1)
 end
 
 function UberBanish:KillTimer()
 	self:debug("Killing the timer...")
 	gAlreadyBanishFlag = nil
-	CooldownFrame_SetTimer(_G[self:GetName().."BanishButtonCooldown"], 0, 0, 0)
-	local BanishButton = _G[this:GetName().."BanishButton"]
+	gBanishStartTime = nil
+	gBanishDuration = nil
+	gBanishTimer = nil
+	CooldownFrame_SetTimer(BanishButton.cd, 0, 0, 0)
 	UIFrameFlashStop(BanishButton)
 	BanishButton:Show() -- needed because UIFrameFlashStop hides frame
 	ButtonPulse_StopPulse(BanishButton)
 end
 
 function UberBanish:BFMPrint(msg)
-	_G[self:GetName().."BFMFrameText"]:SetText(msg)
-	UIFrameFadeOut(_G[self:GetName().."BFMFrame"], 4)
+	BFMFrame.text:SetText(msg)
+	UIFrameFadeOut(BFMFrame, 4)
 end
 
-function UberBanish:Say(msg)
+function UberBanish:Report(msg)
 	if gAnnounceChannel == "SAY" and not UberBanishDB.SayWhenSolo then return end
 	SendChatMessage(msg, gAnnounceChannel)
 end
@@ -378,7 +325,7 @@ function UberBanish:UpdateWarlockList()
 	if UnitInRaid("player") then
 		for i = 1, GetNumRaidMembers() do
 			name, _, _, _, _, class = GetRaidRosterInfo(i)
-			if class and class == UB_playerClass and name ~= PlayerName then
+			if class and class == "WARLOCK" and name ~= PlayerName then
 				self:debug("UpdateWarlock: "..name.." is a Warlock!")
 				table.insert(gWarlockList, name)
 			end
@@ -387,7 +334,7 @@ function UberBanish:UpdateWarlockList()
 		for i = 1, GetNumPartyMembers() do
 			name = UnitName("party"..i)
 			_, class = UnitClass("party"..i)
-			if class == UB_playerClass then
+			if class == "WARLOCK" then
 				self:debug("UpdateWarlock: "..name.." is a Warlock!")
 				table.insert(gWarlockList, name)
 			end
@@ -402,75 +349,51 @@ function UberBanish:SpamWarlocks(msg)
 	end
 end
 
-function UberBanish:LoadBanishFrame()
-	local BanishButton = CreateFrame("Button", self:GetName().."BanishButton", UIParrent)
-	BanishButton:SetFrameStrata("HIGH")
-	BanishButton:SetWidth(50)
-	BanishButton:SetHeight(50)
-	BanishButton:SetPoint(unpack(UberBanishDB.BanishButtonPosition))
-	BanishButton:SetMovable(1)
-	BanishButton:EnableMouse(1)
-	BanishButton:SetNormalTexture("")
-	BanishButton:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
-	BanishButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-	BanishButton:RegisterForDrag("LeftButton")
-	BanishButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-	BanishButton.icon = BanishButton:CreateTexture("BORDER")
-	BanishButton.icon:SetAllPoints(BanishButton)
-	BanishButton.icon:SetTexture("Interface\\Icons\\Spell_Shadow_Cripple")
-	BanishButton.cd = CreateFrame("Model", BanishButton:GetName().."Cooldown", BanishButton, "CooldownFrameTemplate")
-	BanishButton.cd:SetAllPoints(BanishButton)
-	BanishButton.cd:SetScale(BanishButton:GetWidth()/36)
-	BanishButton.cd.text = BanishButton.cd:CreateFontString(BanishButton.cd:GetName().."Text", "OVERLAY")
-	BanishButton.cd.text:SetAllPoints(BanishButton)
-	BanishButton.cd.text:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
-	BanishButton:SetScript("OnDragStart", function()
-		if IsShiftKeyDown() then
-			this:StartMoving()
-		end
-	end)
-	BanishButton:SetScript("OnDragStop", function()
-		this:StopMovingOrSizing()
-	  local point, _, _, xofs, yofs = this:GetPoint()
-		UberBanishDB.BanishButtonPosition = {point, xofs, yofs}
-	end)
-	BanishButton:SetScript("OnEnter", function()
-		GameTooltip:SetOwner(this, ANCHOR_BOTTOMLEFT)
-		GameTooltip:AddDoubleLine(UB_BB_TOOLTIP1[1], UB_BB_TOOLTIP1[2])
-		GameTooltip:AddDoubleLine(UB_BB_TOOLTIP2[1], UB_BB_TOOLTIP2[2])
-		GameTooltip:AddDoubleLine(UB_BB_TOOLTIP3[1], UB_BB_TOOLTIP3[2])
-		GameTooltip:Show()
-	end)
-	BanishButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
-	BanishButton:SetScript("OnClick", function()
-		local spell
-		if arg1 == "LeftButton" then
-			spell = UB_BANISH
-		else
-			spell = UB_BANISH_RANK1
-		end
-		CastSpellByName(spell)
-	end)
-end
-
-function UberBanish:LoadBFMFrame()
-	local BFMFrame = CreateFrame("Frame", self:GetName().."BFMFrame", UIParrent)
-	BFMFrame:Hide()
-	BFMFrame:EnableMouse(1)
-	BFMFrame:SetWidth(360)
-	BFMFrame:SetHeight(50)
-	BFMFrame:SetPoint("CENTER", 0, 50)
-	BFMFrame:SetBackdrop({
-		bgFile = "Interface\\TutorialFrame\\TutorialFrameBackground", tile = true,
-		insets = {left = 5, right = 5, top = 5, bottom = 5},
-	})
-	BFMFrame.text = BFMFrame:CreateFontString(self:GetName().."BFMFrameText", "BACKGROUND", "GameFontNormalLarge")
-	BFMFrame.text:SetAllPoints(BFMFrame)
-	BFMFrame:SetScript("OnUpdate", function()
-		if this:GetAlpha() == 0 then this:Hide() end
-	end)
-end
-
 function UberBanish:round(num, idp)
 	return tonumber(format("%."..(idp or 0).."f", num))
 end
+
+------------------
+-- Hook functions
+------------------
+local BlizzardCastSpellByName = CastSpellByName
+function CastSpellByName(spell)
+	BlizzardCastSpellByName(spell)
+	local _, _, spellRank = string.find(spell, "(%d+)")
+	UberBanish:debug("|cff87CEEBCastSpellByName|r: "..spell)
+	UberBanish:UpdateCastSpellInfo(spell, spellRank)
+end
+
+local BlizzardCastSpell = CastSpell
+function CastSpell(spellId, bookType)
+	BlizzardCastSpell(spellId, bookType)	
+	local spellName, spellRank = GetSpellName(spellId, bookType)
+	_, _, spellRank = string.find(spellRank, "(%d+)")
+	if spellRank then
+		UberBanish:debug(format("|cff87CEEBCastSpell|r: %s; Rank: %s", spellName, spellRank))
+	else
+		UberBanish:debug(format("|cff87CEEBCastSpell|r: %s", spellName))	
+	end
+	UberBanish:UpdateCastSpellInfo(spellName, spellRank)
+end
+
+local UberBanishSpellTooltip = CreateFrame("GameTooltip", "UberBanishSpellTooltip", UIParent, "GameTooltipTemplate")
+UberBanishSpellTooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
+local BlizzardUseAction = UseAction
+function UseAction(slot, checkCursor, onSelf)
+	BlizzardUseAction(slot, checkCursor, onSelf)
+	if not (UberBanishDB.Enabled and HasAction(slot)) then return end
+	
+	UberBanishSpellTooltip:Hide()
+	UberBanishSpellTooltip:SetAction(slot)
+	
+	local spellName = UberBanishSpellTooltipTextLeft1:GetText()
+	if not spellName then return end -- macros don't have spellName
+	local spellRank = UberBanishSpellTooltipTextRight1:GetText()
+	if spellRank then
+		_, _, spellRank = string.find(spellRank, "(%d+)")
+	end
+	UberBanish:debug(format("|cff87CEEBUseAction|r: slotID: %s; spellName: %s; spellRank: %s", slot, spellName, tostring(spellRank)))
+	UberBanish:UpdateCastSpellInfo(spellName, spellRank)
+end
+------------------
